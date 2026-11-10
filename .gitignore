@@ -1,0 +1,59 @@
+## Visual Studio & .NET Build Output
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+## Visual Studio Cache & User Files
+.vs/
+*.user
+*.userosscache
+*.suo
+*.userprefs
+*.sln.docstates
+
+## WPF Temporary Files
+*_wpftmp.csproj
+
+## Build Results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+
+## NuGet Packages
+*.nupkg
+packages/
+!packages/build/
+*.nuget.props
+*.nuget.targets
+
+## Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+## SQL Server Local Database Files & Logs
+*.mdf
+*.ldf
+*.ndf
+
+## Local Cache / Temporary Files
+*.tmp
+*.temp
+/Spotwifi/Cache/
+/Spotwifi/AppData/
+/covers_cache/
+
+## OS Generated Files
+Thumbs.db
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+
