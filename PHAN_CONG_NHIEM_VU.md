@@ -68,7 +68,7 @@ Spotwifi/
 > **Trọng tâm:** SQL Server, ADO.NET (`Microsoft.Data.SqlClient`), Thư viện `TagLibSharp`.
 
 #### Task 1.1: Thiết kế & Khởi tạo CSDL SQL Server
-- [ ] Cài đặt gói thư viện `Microsoft.Data.SqlClient` vào dự án (`dotnet add package Microsoft.Data.SqlClient`).
+- [x] Cài đặt gói thư viện `Microsoft.Data.SqlClient` vào dự án (`dotnet add package Microsoft.Data.SqlClient`).
 - [ ] Viết file script `Database/Script_Tao_CSDL.sql` tạo CSDL `SpotwifiDB`.
 - [ ] Tạo bảng `Songs` (`Id`, `Title`, `Artist`, `Album`, `DurationSeconds`, `FilePath`, `CoverImagePath`, `IsFavorite`, `DateAdded`).
 - [ ] Tạo bảng `Playlists` (`PlaylistId`, `Name`, `Description`, `CreatedAt`).
