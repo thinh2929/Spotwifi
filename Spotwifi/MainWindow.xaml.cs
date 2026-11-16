@@ -14,9 +14,6 @@ using Spotwifi.Models;
 
 namespace Spotwifi
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         private ObservableCollection<Song> songsList = new ObservableCollection<Song>();
@@ -28,6 +25,7 @@ namespace Spotwifi
         private Song? currentSong = null;
         private bool isPlaying = false;
         private bool isUserDraggingSlider = false;
+        private bool isSidebarOpen = true;
 
         public MainWindow()
         {
@@ -35,7 +33,6 @@ namespace Spotwifi
 
             DgSongs.ItemsSource = songsList;
 
-            // Cấu hình timer cập nhật tiến trình bài hát
             progressTimer.Interval = TimeSpan.FromMilliseconds(500);
             progressTimer.Tick += ProgressTimer_Tick;
 
@@ -55,6 +52,65 @@ namespace Spotwifi
             return (maxNumber + 1).ToString("D4");
         }
 
+        #region Sidebar
+
+        private void BtnToggleSidebar_Click(object sender, RoutedEventArgs e)
+        {
+            isSidebarOpen = !isSidebarOpen;
+            SidebarColumn.Width = isSidebarOpen
+                ? new GridLength(280)
+                : new GridLength(0);
+            BtnToggleSidebar.Content = isSidebarOpen ? "◀" : "▶";
+        }
+
+        private void BtnTabInfo_Click(object sender, RoutedEventArgs e)
+        {
+            PanelSongInfo.Visibility = Visibility.Visible;
+            PanelQueue.Visibility    = Visibility.Collapsed;
+
+            BtnTabInfo.Foreground      = Brushes.Black;
+            BtnTabInfo.BorderThickness = new Thickness(0, 0, 0, 2);
+            BtnTabInfo.BorderBrush     = Brushes.Black;
+
+            BtnTabQueue.Foreground      = new SolidColorBrush(Color.FromRgb(0x6C, 0x75, 0x7D));
+            BtnTabQueue.BorderThickness = new Thickness(0);
+        }
+
+        private void BtnTabQueue_Click(object sender, RoutedEventArgs e)
+        {
+            PanelSongInfo.Visibility = Visibility.Collapsed;
+            PanelQueue.Visibility    = Visibility.Visible;
+
+            BtnTabQueue.Foreground      = Brushes.Black;
+            BtnTabQueue.BorderThickness = new Thickness(0, 0, 0, 2);
+            BtnTabQueue.BorderBrush     = Brushes.Black;
+
+            BtnTabInfo.Foreground      = new SolidColorBrush(Color.FromRgb(0x6C, 0x75, 0x7D));
+            BtnTabInfo.BorderThickness = new Thickness(0);
+        }
+
+        private void LbQueue_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (LbQueue.SelectedItem is Song song)
+                PlaySong(song);
+        }
+
+        private void UpdateSidebar(Song song)
+        {
+            TxtSidebarTitle.Text    = song.Title;
+            TxtSidebarArtist.Text   = song.Artist;
+            TxtSidebarAlbum.Text    = song.Album;
+            TxtSidebarDuration.Text = song.DurationDisplay;
+            TxtSidebarDateAdded.Text = song.DateAdded.ToString("dd/MM/yyyy");
+            ImgSidebarCover.Source  = song.CoverImage;
+
+            // Cập nhật queue: các bài sau bài đang phát
+            int idx = allSongMaster.IndexOf(song);
+            LbQueue.ItemsSource = allSongMaster.Skip(idx + 1).ToList();
+        }
+
+        #endregion
+
         #region Event Handlers - Toolbar & Search
 
         private void BtnOpenFolder_Click(object sender, RoutedEventArgs e)
@@ -72,7 +128,6 @@ namespace Spotwifi
                 int countAdded = 0;
                 foreach (string file in files)
                 {
-                    // Tránh thêm bài hát trùng đường dẫn
                     if (allSongMaster.Any(s => s.FilePath.Equals(file, StringComparison.OrdinalIgnoreCase)))
                         continue;
 
@@ -81,15 +136,14 @@ namespace Spotwifi
                         var tagFile = TagLib.File.Create(file);
                         var song = new Song
                         {
-                            Id = TaoMaBaiHatMoi(),
-                            Title = !string.IsNullOrWhiteSpace(tagFile.Tag.Title) ? tagFile.Tag.Title : Path.GetFileNameWithoutExtension(file),
+                            Id     = TaoMaBaiHatMoi(),
+                            Title  = !string.IsNullOrWhiteSpace(tagFile.Tag.Title)          ? tagFile.Tag.Title          : Path.GetFileNameWithoutExtension(file),
                             Artist = !string.IsNullOrWhiteSpace(tagFile.Tag.FirstPerformer) ? tagFile.Tag.FirstPerformer : "Unknown Artist",
-                            Album = !string.IsNullOrWhiteSpace(tagFile.Tag.Album) ? tagFile.Tag.Album : "Unknown Album",
-                            Duration = tagFile.Properties.Duration,
-                            FilePath = file
+                            Album  = !string.IsNullOrWhiteSpace(tagFile.Tag.Album)          ? tagFile.Tag.Album          : "Unknown Album",
+                            Duration  = tagFile.Properties.Duration,
+                            FilePath  = file
                         };
 
-                        // Đọc ảnh bìa nếu có
                         if (tagFile.Tag.Pictures.Length > 0)
                         {
                             byte[] bin = tagFile.Tag.Pictures[0].Data.Data;
@@ -99,8 +153,8 @@ namespace Spotwifi
                                 mem.Position = 0;
                                 bitmap.BeginInit();
                                 bitmap.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
-                                bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                                bitmap.StreamSource = mem;
+                                bitmap.CacheOption   = BitmapCacheOption.OnLoad;
+                                bitmap.StreamSource  = mem;
                                 bitmap.EndInit();
                             }
                             bitmap.Freeze();
@@ -118,9 +172,7 @@ namespace Spotwifi
                 }
 
                 if (countAdded > 0)
-                {
-                    MessageBox.Show($"Đã nhập thành công {countAdded} bài hát vào danh sách!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
+                    MessageBox.Show($"Đã nhập thành công {countAdded} bài hát!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 
@@ -132,14 +184,12 @@ namespace Spotwifi
             var filtered = string.IsNullOrEmpty(keyword)
                 ? allSongMaster
                 : allSongMaster.Where(s =>
-                    (s.Title != null && s.Title.ToLower().Contains(keyword)) ||
+                    (s.Title  != null && s.Title.ToLower().Contains(keyword))  ||
                     (s.Artist != null && s.Artist.ToLower().Contains(keyword)) ||
-                    (s.Album != null && s.Album.ToLower().Contains(keyword)));
+                    (s.Album  != null && s.Album.ToLower().Contains(keyword)));
 
             foreach (var song in filtered)
-            {
                 songsList.Add(song);
-            }
         }
 
         #endregion
@@ -149,9 +199,7 @@ namespace Spotwifi
         private void DgSongs_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (DgSongs.SelectedItem is Song selectedSong)
-            {
                 PlaySong(selectedSong);
-            }
         }
 
         #endregion
@@ -169,15 +217,19 @@ namespace Spotwifi
                 isPlaying = true;
                 BtnPlayPause.Content = "⏸";
 
+                // Cập nhật Player bar
                 TxtCurrentTitle.Text = song.Title;
                 TxtCurrentArtist.Text = song.Artist;
                 TxtTotalTime.Text = song.DurationDisplay;
 
                 SliderProgress.Minimum = 0;
                 SliderProgress.Maximum = song.Duration.TotalSeconds;
-                SliderProgress.Value = 0;
+                SliderProgress.Value   = 0;
 
                 progressTimer.Start();
+
+                // Cập nhật Sidebar
+                UpdateSidebar(song);
             }
             else
             {
@@ -190,9 +242,7 @@ namespace Spotwifi
             if (currentSong == null)
             {
                 if (songsList.Count > 0)
-                {
                     PlaySong(songsList[0]);
-                }
                 return;
             }
 
@@ -217,7 +267,7 @@ namespace Spotwifi
             if (allSongMaster.Count == 0 || currentSong == null) return;
 
             int currentIndex = allSongMaster.IndexOf(currentSong);
-            int nextIndex = (currentIndex + 1) % allSongMaster.Count;
+            int nextIndex    = (currentIndex + 1) % allSongMaster.Count;
             PlaySong(allSongMaster[nextIndex]);
         }
 
@@ -226,7 +276,7 @@ namespace Spotwifi
             if (allSongMaster.Count == 0 || currentSong == null) return;
 
             int currentIndex = allSongMaster.IndexOf(currentSong);
-            int prevIndex = (currentIndex - 1 + allSongMaster.Count) % allSongMaster.Count;
+            int prevIndex    = (currentIndex - 1 + allSongMaster.Count) % allSongMaster.Count;
             PlaySong(allSongMaster[prevIndex]);
         }
 
@@ -243,7 +293,7 @@ namespace Spotwifi
             if (!isUserDraggingSlider && mediaPlayer.NaturalDuration.HasTimeSpan)
             {
                 SliderProgress.Value = mediaPlayer.Position.TotalSeconds;
-                TxtCurrentTime.Text = mediaPlayer.Position.ToString(@"mm\:ss");
+                TxtCurrentTime.Text  = mediaPlayer.Position.ToString(@"mm\:ss");
             }
         }
 
@@ -257,7 +307,7 @@ namespace Spotwifi
             if (isUserDraggingSlider)
             {
                 mediaPlayer.Position = TimeSpan.FromSeconds(SliderProgress.Value);
-                TxtCurrentTime.Text = mediaPlayer.Position.ToString(@"mm\:ss");
+                TxtCurrentTime.Text  = mediaPlayer.Position.ToString(@"mm\:ss");
                 isUserDraggingSlider = false;
             }
         }
@@ -265,9 +315,7 @@ namespace Spotwifi
         private void SliderVolume_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (mediaPlayer != null)
-            {
                 mediaPlayer.Volume = SliderVolume.Value;
-            }
         }
 
         #endregion
