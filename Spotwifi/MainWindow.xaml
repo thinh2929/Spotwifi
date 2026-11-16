@@ -5,73 +5,223 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Spotwifi"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Spotwifi" Height="650" Width="1100" MinWidth="800" MinHeight="500">
+
     <Grid Margin="15">
         <Grid.RowDefinitions>
             <!-- 0: Thanh công cụ -->
             <RowDefinition Height="Auto"/>
-            <!-- 1: Bảng danh sách nhạc -->
+            <!-- 1: Nội dung chính (danh sách + sidebar) -->
             <RowDefinition Height="*"/>
             <!-- 2: Cụm Player điều khiển -->
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- 0. THANH CÔNG CỤ -->
+        <!-- ============================================================ -->
+        <!-- 0. THANH CÔNG CỤ                                             -->
+        <!-- ============================================================ -->
         <Grid Grid.Row="0" Margin="0,0,0,12">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <Button Content="📂 Chọn thư mục nhạc..." 
+            <Button Content="📂 Chọn thư mục nhạc..."
                     Padding="12,6" Height="34" FontSize="13"
                     Click="BtnOpenFolder_Click" Cursor="Hand"/>
 
             <TextBox x:Name="TxtSearch" Grid.Column="1" Margin="15,0,0,0" Height="34"
                      VerticalContentAlignment="Center" Padding="8,0" FontSize="13"
                      TextChanged="TxtSearch_TextChanged"/>
+
+            <!-- Nút toggle sidebar -->
+            <Button x:Name="BtnToggleSidebar" Grid.Column="2"
+                    Content="◀" Width="30" Height="34" Margin="8,0,0,0"
+                    FontSize="12" Cursor="Hand"
+                    Click="BtnToggleSidebar_Click"
+                    ToolTip="Hiển thị / ẩn thông tin bài hát"/>
         </Grid>
 
-        <!-- 1. BẢNG DANH SÁCH BÀI HÁT -->
-        <DataGrid x:Name="DgSongs" Grid.Row="1"
-                  AutoGenerateColumns="False" 
-                  CanUserAddRows="False"
-                  IsReadOnly="True" 
-                  SelectionMode="Single"
-                  GridLinesVisibility="Horizontal"
-                  HeadersVisibility="Column"
-                  RowHeight="44"
-                  Background="White"
-                  BorderBrush="#E0E0E0"
-                  MouseDoubleClick="DgSongs_MouseDoubleClick">
-            <DataGrid.Columns>
-                <!-- Cột hiển thị ảnh bìa -->
-                <DataGridTemplateColumn Header="Bìa" Width="55">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Border CornerRadius="4" ClipToBounds="True" Width="36" Height="36" Background="#E9ECEF">
-                                <Image Source="{Binding CoverImage}" Stretch="UniformToFill"/>
+        <!-- ============================================================ -->
+        <!-- 1. VÙNG NỘI DUNG CHÍNH                                       -->
+        <!-- ============================================================ -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <!-- Danh sách bài hát -->
+                <ColumnDefinition Width="*"/>
+                <!-- Sidebar phải -->
+                <ColumnDefinition x:Name="SidebarColumn" Width="280"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- BẢNG DANH SÁCH BÀI HÁT -->
+            <DataGrid x:Name="DgSongs" Grid.Column="0"
+                      AutoGenerateColumns="False"
+                      CanUserAddRows="False"
+                      IsReadOnly="True"
+                      SelectionMode="Single"
+                      GridLinesVisibility="Horizontal"
+                      HeadersVisibility="Column"
+                      RowHeight="44"
+                      Background="White"
+                      BorderBrush="#E0E0E0"
+                      Margin="0,0,8,0"
+                      MouseDoubleClick="DgSongs_MouseDoubleClick">
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="Bìa" Width="55">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border CornerRadius="4" ClipToBounds="True" Width="36" Height="36" Background="#E9ECEF">
+                                    <Image Source="{Binding CoverImage}" Stretch="UniformToFill"/>
+                                </Border>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="Tên bài hát" Binding="{Binding Title}" Width="2*" FontWeight="SemiBold"/>
+                    <DataGridTextColumn Header="Nghệ sĩ"    Binding="{Binding Artist}" Width="1.5*"/>
+                    <DataGridTextColumn Header="Album"      Binding="{Binding Album}"  Width="1.2*"/>
+                    <DataGridTextColumn Header="Thời lượng" Binding="{Binding DurationDisplay}" Width="85"/>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <!-- ======================================================== -->
+            <!-- RIGHT SIDEBAR                                             -->
+            <!-- ======================================================== -->
+            <Border x:Name="RightSidebar" Grid.Column="1"
+                    BorderBrush="#E0E0E0" BorderThickness="1"
+                    CornerRadius="8" Margin="8,0,0,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Tab header -->
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="12,10,12,0">
+                        <Button x:Name="BtnTabInfo" Content="Đang phát"
+                                Background="Transparent"
+                                BorderThickness="0,0,0,2" BorderBrush="#333333"
+                                Padding="0,0,16,8" FontSize="12" FontWeight="SemiBold"
+                                Cursor="Hand" Click="BtnTabInfo_Click"/>
+                        <Button x:Name="BtnTabQueue" Content="Danh sách chờ"
+                                Background="Transparent" Foreground="#6C757D"
+                                BorderThickness="0" Padding="0,0,0,8" FontSize="12"
+                                Cursor="Hand" Click="BtnTabQueue_Click"/>
+                    </StackPanel>
+
+                    <!-- PANEL: THÔNG TIN BÀI HÁT -->
+                    <ScrollViewer x:Name="PanelSongInfo" Grid.Row="1"
+                                  VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Disabled">
+                        <StackPanel Margin="12,12,12,12">
+
+                            <!-- Ảnh bìa lớn -->
+                            <Border CornerRadius="6" ClipToBounds="True"
+                                    Width="230" Height="230"
+                                    Background="#E9ECEF" HorizontalAlignment="Center">
+                                <Image x:Name="ImgSidebarCover" Stretch="UniformToFill"/>
                             </Border>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
 
-                <DataGridTextColumn Header="Tên bài hát" Binding="{Binding Title}" Width="2*" FontWeight="SemiBold"/>
-                <DataGridTextColumn Header="Nghệ sĩ" Binding="{Binding Artist}" Width="1.5*"/>
-                <DataGridTextColumn Header="Album" Binding="{Binding Album}" Width="1.2*"/>
-                <DataGridTextColumn Header="Thời lượng" Binding="{Binding DurationDisplay}" Width="85"/>
-            </DataGrid.Columns>
-        </DataGrid>
+                            <!-- Tên bài hát -->
+                            <TextBlock x:Name="TxtSidebarTitle"
+                                       Text="Chưa chọn bài hát"
+                                       FontSize="14" FontWeight="Bold"
+                                       TextTrimming="CharacterEllipsis"
+                                       TextWrapping="NoWrap"
+                                       Margin="0,14,0,4"/>
 
-        <!-- 2. CỤM PLAYER PHÍA DƯỚI -->
-        <Border Grid.Row="2" Background="#FFFFFF" BorderBrush="#E0E0E0" BorderThickness="1" 
+                            <!-- Nghệ sĩ -->
+                            <TextBlock x:Name="TxtSidebarArtist"
+                                       Text="—"
+                                       Foreground="#6C757D" FontSize="13"
+                                       TextTrimming="CharacterEllipsis"/>
+
+                            <!-- Album -->
+                            <TextBlock x:Name="TxtSidebarAlbum"
+                                       Text=""
+                                       Foreground="#6C757D" FontSize="12"
+                                       Margin="0,2,0,0"
+                                       TextTrimming="CharacterEllipsis"/>
+
+                            <!-- Thời lượng -->
+                            <TextBlock x:Name="TxtSidebarDuration"
+                                       Text=""
+                                       Foreground="#6C757D" FontSize="11"
+                                       Margin="0,6,0,0"/>
+
+                            <Separator Margin="0,12,0,8"/>
+
+                            <!-- Ngày thêm -->
+                            <TextBlock Text="Ngày thêm" Foreground="#6C757D" FontSize="10" Margin="0,0,0,2"/>
+                            <TextBlock x:Name="TxtSidebarDateAdded"
+                                       Text=""
+                                       Foreground="#333333" FontSize="12"/>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <!-- PANEL: DANH SÁCH CHỜ (QUEUE) -->
+                    <Grid x:Name="PanelQueue" Grid.Row="1" Visibility="Collapsed">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Text="Tiếp theo"
+                                   Foreground="#6C757D" FontSize="12" FontWeight="SemiBold"
+                                   Margin="12,10,12,4"/>
+
+                        <ListBox x:Name="LbQueue" Grid.Row="1"
+                                 BorderThickness="0"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                 MouseDoubleClick="LbQueue_MouseDoubleClick">
+
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="ListBoxItem">
+                                    <Setter Property="Padding" Value="8,4"/>
+                                    <Setter Property="Cursor" Value="Hand"/>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="40"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <Border CornerRadius="4" ClipToBounds="True"
+                                                Width="36" Height="36" Background="#E9ECEF">
+                                            <Image Source="{Binding CoverImage}" Stretch="UniformToFill"/>
+                                        </Border>
+
+                                        <StackPanel Grid.Column="1" Margin="8,0,0,0" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding Title}"
+                                                       FontSize="12" FontWeight="SemiBold"
+                                                       TextTrimming="CharacterEllipsis"/>
+                                            <TextBlock Text="{Binding Artist}"
+                                                       Foreground="#6C757D" FontSize="11"
+                                                       TextTrimming="CharacterEllipsis"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Grid>
+
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- ============================================================ -->
+        <!-- 2. CỤM PLAYER PHÍA DƯỚI                                      -->
+        <!-- ============================================================ -->
+        <Border Grid.Row="2" Background="#FFFFFF" BorderBrush="#E0E0E0" BorderThickness="1"
                 CornerRadius="8" Padding="15,10" Margin="0,12,0,0">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
-                    <!-- Thanh tua tiến độ -->
                     <RowDefinition Height="Auto"/>
-                    <!-- Cụm thông tin & nút bấm -->
                 </Grid.RowDefinitions>
 
                 <!-- Thanh tua bài hát (Seek bar) -->
@@ -82,43 +232,50 @@
                         <ColumnDefinition Width="45"/>
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock x:Name="TxtCurrentTime" Text="00:00" VerticalAlignment="Center" FontSize="11" Foreground="#6C757D"/>
-                    <Slider x:Name="SliderProgress" Grid.Column="1" Minimum="0" Maximum="100" 
+                    <TextBlock x:Name="TxtCurrentTime" Text="00:00"
+                               VerticalAlignment="Center" FontSize="11" Foreground="#6C757D"/>
+                    <Slider x:Name="SliderProgress" Grid.Column="1"
+                            Minimum="0" Maximum="100"
                             Margin="8,0" VerticalAlignment="Center" Cursor="Hand"
                             PreviewMouseDown="Slider_PreviewMouseDown"
                             ValueChanged="SliderProgress_ValueChanged"/>
-                    <TextBlock x:Name="TxtTotalTime" Grid.Column="2" Text="00:00" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="11" Foreground="#6C757D"/>
+                    <TextBlock x:Name="TxtTotalTime" Grid.Column="2" Text="00:00"
+                               HorizontalAlignment="Right" VerticalAlignment="Center"
+                               FontSize="11" Foreground="#6C757D"/>
                 </Grid>
 
                 <!-- Cụm điều khiển chính -->
                 <Grid Grid.Row="1">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="2*"/>
-                        <!-- Thông tin bài đang nghe -->
                         <ColumnDefinition Width="2*"/>
-                        <!-- Nút bấm điều khiển -->
                         <ColumnDefinition Width="1.5*"/>
-                        <!-- Âm lượng -->
                     </Grid.ColumnDefinitions>
 
                     <!-- Thông tin bài đang phát -->
                     <StackPanel VerticalAlignment="Center">
-                        <TextBlock x:Name="TxtCurrentTitle" Text="Chưa chọn bài hát" FontWeight="Bold" FontSize="13" TextTrimming="CharacterEllipsis"/>
-                        <TextBlock x:Name="TxtCurrentArtist" Text="—" FontSize="11" Foreground="#6C757D" Margin="0,2,0,0"/>
+                        <TextBlock x:Name="TxtCurrentTitle" Text="Chưa chọn bài hát"
+                                   FontWeight="Bold" FontSize="13" TextTrimming="CharacterEllipsis"/>
+                        <TextBlock x:Name="TxtCurrentArtist" Text="—"
+                                   FontSize="11" Foreground="#6C757D" Margin="0,2,0,0"/>
                     </StackPanel>
 
-                    <!-- Cụm nút Play / Pause / Chuyển bài -->
-                    <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <!-- Nút Play / Pause / Chuyển bài -->
+                    <StackPanel Grid.Column="1" Orientation="Horizontal"
+                                HorizontalAlignment="Center" VerticalAlignment="Center">
                         <Button Content="⏮" Width="36" Height="32" Margin="3" FontSize="14" Click="BtnPrev_Click"/>
-                        <Button x:Name="BtnPlayPause" Content="▶" Width="48" Height="36" Margin="6,0" FontSize="16" FontWeight="Bold" Click="BtnPlayPause_Click"/>
+                        <Button x:Name="BtnPlayPause" Content="▶" Width="48" Height="36"
+                                Margin="6,0" FontSize="16" FontWeight="Bold" Click="BtnPlayPause_Click"/>
                         <Button Content="⏭" Width="36" Height="32" Margin="3" FontSize="14" Click="BtnNext_Click"/>
                     </StackPanel>
 
-                    <!-- Cụm âm lượng -->
-                    <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <!-- Âm lượng -->
+                    <StackPanel Grid.Column="2" Orientation="Horizontal"
+                                HorizontalAlignment="Right" VerticalAlignment="Center">
                         <TextBlock Text="🔊" VerticalAlignment="Center" Margin="0,0,8,0" FontSize="13"/>
-                        <Slider x:Name="SliderVolume" Width="100" Minimum="0" Maximum="1" Value="0.7" 
-                                VerticalAlignment="Center" Cursor="Hand" ValueChanged="SliderVolume_ValueChanged"/>
+                        <Slider x:Name="SliderVolume" Width="100" Minimum="0" Maximum="1" Value="0.7"
+                                VerticalAlignment="Center" Cursor="Hand"
+                                ValueChanged="SliderVolume_ValueChanged"/>
                     </StackPanel>
                 </Grid>
             </Grid>

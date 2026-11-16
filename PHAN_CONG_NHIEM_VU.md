@@ -130,6 +130,11 @@ Spotwifi/
   - [ ] Vùng trái: Ảnh bìa vuông nhỏ (56x56), Tên bài hát, Tên nghệ sĩ, Nút Trái tim (Like/Unlike).
   - [ ] Vùng giữa: Cụm nút Play/Pause tròn lớn, Nút Prev, Nút Next, Nút Shuffle, Nút Repeat; Thanh tua nhạc (Seek bar) cùng nhãn thời gian 2 đầu (`01:25` - `03:45`).
   - [ ] Vùng phải: Icon loa âm thanh, Thanh trượt Volume, Nút Mute.
+- [x] Thiết kế **Sidebar bên phải (Right Sidebar)** hiển thị thông tin bài hát & danh sách chờ:
+  - [x] Nút toggle mở/đóng Sidebar phải (`BtnToggleSidebar` ◀/▶).
+  - [x] Tab "Đang phát": Ảnh bìa lớn, tên bài hát, nghệ sĩ, album, thời lượng và ngày thêm.
+  - [x] Tab "Danh sách chờ" (Queue): Danh sách các bài hát kế tiếp với ảnh bìa thumbnail, double-click để phát trực tiếp.
+  - [x] Đồng bộ thông tin và danh sách chờ theo bài hát đang phát trong hàm `UpdateSidebar()`.
 
 #### Task 2.3: Thiết kế các màn hình chi tiết (UserControls & Dialogs)
 - [ ] Thiết kế `UcSongList.xaml` (Bảng danh sách bài hát):
@@ -157,9 +162,9 @@ Spotwifi/
 - [x] Khởi tạo và quản lý đối tượng `MediaPlayer`.
 - [x] Viết hàm `PlaySong(Song song)`: Nạp file từ đường dẫn `FilePath` và phát nhạc.
 - [x] Viết hàm `Pause()` và `Resume()`: Chuyển đổi trạng thái nút Play/Pause trên giao diện.
-- [ ] Viết hàm `Next()`: Chuyển sang bài tiếp theo trong hàng đợi (Queue).
-- [ ] Viết hàm `Previous()`: Quay lại bài hát trước đó.
-- [ ] Xử lý sự kiện `MediaEnded`: Tự động chuyển phát bài kế tiếp khi bài hiện tại chạy hết.
+- [x] Viết hàm `Next()`: Chuyển sang bài tiếp theo trong hàng đợi (Queue).
+- [x] Viết hàm `Previous()`: Quay lại bài hát trước đó.
+- [x] Xử lý sự kiện `MediaEnded`: Tự động chuyển phát bài kế tiếp khi bài hiện tại chạy hết.
 - [ ] Viết thuật toán phát ngẫu nhiên (`Shuffle`): Trộn danh sách bài hát không trùng lặp.
 - [ ] Viết chế độ lặp lại (`Repeat`):
   - [ ] Lặp lại toàn bộ danh sách (Repeat All).
