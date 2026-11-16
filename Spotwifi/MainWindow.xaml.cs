@@ -214,25 +214,28 @@ namespace Spotwifi
 
         private void BtnNext_Click(object sender, RoutedEventArgs e)
         {
-            if (songsList.Count == 0 || currentSong == null) return;
+            if (allSongMaster.Count == 0 || currentSong == null) return;
 
-            int currentIndex = songsList.IndexOf(currentSong);
-            int nextIndex = (currentIndex + 1) % songsList.Count;
-            PlaySong(songsList[nextIndex]);
+            int currentIndex = allSongMaster.IndexOf(currentSong);
+            int nextIndex = (currentIndex + 1) % allSongMaster.Count;
+            PlaySong(allSongMaster[nextIndex]);
         }
 
         private void BtnPrev_Click(object sender, RoutedEventArgs e)
         {
-            if (songsList.Count == 0 || currentSong == null) return;
+            if (allSongMaster.Count == 0 || currentSong == null) return;
 
-            int currentIndex = songsList.IndexOf(currentSong);
-            int prevIndex = (currentIndex - 1 + songsList.Count) % songsList.Count;
-            PlaySong(songsList[prevIndex]);
+            int currentIndex = allSongMaster.IndexOf(currentSong);
+            int prevIndex = (currentIndex - 1 + allSongMaster.Count) % allSongMaster.Count;
+            PlaySong(allSongMaster[prevIndex]);
         }
 
         private void MediaPlayer_MediaEnded(object? sender, EventArgs e)
         {
-            BtnNext_Click(this, new RoutedEventArgs());
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                BtnNext_Click(this, new RoutedEventArgs());
+            });
         }
 
         private void ProgressTimer_Tick(object? sender, EventArgs e)

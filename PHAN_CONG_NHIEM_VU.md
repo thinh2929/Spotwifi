@@ -68,9 +68,9 @@ Spotwifi/
 > **Trọng tâm:** SQL Server, ADO.NET (`Microsoft.Data.SqlClient`), Thư viện `TagLibSharp`.
 
 #### Task 1.1: Thiết kế & Khởi tạo CSDL SQL Server
-- [ ] Cài đặt gói thư viện `Microsoft.Data.SqlClient` vào dự án (`dotnet add package Microsoft.Data.SqlClient`).
-- [ ] Viết file script `Database/Script_Tao_CSDL.sql` tạo CSDL `SpotwifiDB`.
-- [ ] Tạo bảng `Songs` (`Id`, `Title`, `Artist`, `Album`, `DurationSeconds`, `FilePath`, `CoverImagePath`, `IsFavorite`, `DateAdded`). // DateAdded: Ngày thêm nhạc vào database
+- [x] Cài đặt gói thư viện `Microsoft.Data.SqlClient` vào dự án (`dotnet add package Microsoft.Data.SqlClient`).
+- [x] Viết file script `Database/Script_Tao_CSDL.sql` tạo CSDL `SpotwifiDB`.
+- [x] Tạo bảng `Songs` (`Id`, `Title`, `Artist`, `Album`, `DurationSeconds`, `FilePath`, `CoverImagePath`, `IsFavorite`, `DateAdded`). // DateAdded: Ngày thêm nhạc vào database
 - [ ] Tạo bảng `Playlists` (`PlaylistId`, `Name`, `Description`, `CreatedAt`).
 - [ ] Tạo bảng `Playlist_Songs` (`PlaylistId`, `SongId`, `AddedAt`, PK composite). // AddedAt: Ngày thêm nhạc vào Playlist
 - [ ] Viết lớp `Database/DatabaseHelper.cs` quản lý kết nối, mở/đóng kết nối an toàn.
@@ -154,9 +154,9 @@ Spotwifi/
 > **Trọng tâm:** `System.Windows.Media.MediaPlayer`, `DispatcherTimer`, Tìm kiếm, Báo cáo & Thuyết trình.
 
 #### Task 3.1: Xây dựng bộ máy phát nhạc (`AudioPlayerService.cs`)
-- [ ] Khởi tạo và quản lý đối tượng `MediaPlayer`.
-- [ ] Viết hàm `PlaySong(Song song)`: Nạp file từ đường dẫn `FilePath` và phát nhạc.
-- [ ] Viết hàm `Pause()` và `Resume()`: Chuyển đổi trạng thái nút Play/Pause trên giao diện.
+- [x] Khởi tạo và quản lý đối tượng `MediaPlayer`.
+- [x] Viết hàm `PlaySong(Song song)`: Nạp file từ đường dẫn `FilePath` và phát nhạc.
+- [x] Viết hàm `Pause()` và `Resume()`: Chuyển đổi trạng thái nút Play/Pause trên giao diện.
 - [ ] Viết hàm `Next()`: Chuyển sang bài tiếp theo trong hàng đợi (Queue).
 - [ ] Viết hàm `Previous()`: Quay lại bài hát trước đó.
 - [ ] Xử lý sự kiện `MediaEnded`: Tự động chuyển phát bài kế tiếp khi bài hiện tại chạy hết.
