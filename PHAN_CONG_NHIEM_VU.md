@@ -70,9 +70,9 @@ Spotwifi/
 #### Task 1.1: Thiết kế & Khởi tạo CSDL SQL Server
 - [ ] Cài đặt gói thư viện `Microsoft.Data.SqlClient` vào dự án (`dotnet add package Microsoft.Data.SqlClient`).
 - [ ] Viết file script `Database/Script_Tao_CSDL.sql` tạo CSDL `SpotwifiDB`.
-- [ ] Tạo bảng `Songs` (`Id`, `Title`, `Artist`, `Album`, `DurationSeconds`, `FilePath`, `CoverImagePath`, `IsFavorite`, `DateAdded`).
+- [ ] Tạo bảng `Songs` (`Id`, `Title`, `Artist`, `Album`, `DurationSeconds`, `FilePath`, `CoverImagePath`, `IsFavorite`, `DateAdded`). // DateAdded: Ngày thêm nhạc vào database
 - [ ] Tạo bảng `Playlists` (`PlaylistId`, `Name`, `Description`, `CreatedAt`).
-- [ ] Tạo bảng `Playlist_Songs` (`PlaylistId`, `SongId`, `AddedAt`, PK composite).
+- [ ] Tạo bảng `Playlist_Songs` (`PlaylistId`, `SongId`, `AddedAt`, PK composite). // AddedAt: Ngày thêm nhạc vào Playlist
 - [ ] Viết lớp `Database/DatabaseHelper.cs` quản lý kết nối, mở/đóng kết nối an toàn.
 - [ ] Viết các hàm tiện ích: `ExecuteQuery(sql, parameters)`, `ExecuteNonQuery(sql, parameters)`, `ExecuteScalar(sql, parameters)`.
 - [ ] Thêm chuỗi kết nối `ConnectionString` vào cấu hình ứng dụng (`App.config` hoặc cấu hình tập trung).
@@ -227,7 +227,6 @@ public class Song
     public TimeSpan Duration { get; set; }
     public string FilePath { get; set; } = string.Empty;
     public BitmapImage? CoverImage { get; set; }
-    public bool IsFavorite { get; set; } = false;
     public DateTime DateAdded { get; set; } = DateTime.Now;
 
     public string DurationDisplay => Duration.ToString(@"mm\:ss");

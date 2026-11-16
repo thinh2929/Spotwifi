@@ -12,7 +12,6 @@ namespace Spotwifi.Models
         public TimeSpan Duration { get; set; }
         public string FilePath { get; set; } = string.Empty;
         public BitmapImage? CoverImage { get; set; }
-        public bool IsFavorite { get; set; } = false;
         public DateTime DateAdded { get; set; } = DateTime.Now;
 
         public string DurationDisplay => Duration.ToString(@"mm\:ss");

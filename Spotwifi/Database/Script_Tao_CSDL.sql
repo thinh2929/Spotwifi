@@ -19,7 +19,6 @@ BEGIN
         DurationSeconds INT NOT NULL DEFAULT 0,
         FilePath NVARCHAR(1000) NOT NULL UNIQUE,
         CoverImagePath NVARCHAR(1000) NULL,
-        IsFavorite BIT NOT NULL DEFAULT 0,
         DateAdded DATETIME NOT NULL DEFAULT GETDATE()
     );
 END
@@ -48,5 +47,16 @@ BEGIN
         CONSTRAINT FK_PlaylistSongs_Playlists FOREIGN KEY (PlaylistId) REFERENCES Playlists(PlaylistId) ON DELETE CASCADE,
         CONSTRAINT FK_PlaylistSongs_Songs FOREIGN KEY (SongId) REFERENCES Songs(Id) ON DELETE CASCADE
     );
+END
+GO
+
+-- 4. Seed dữ liệu: Playlist "Favorites" mặc định (PlaylistId = 1)
+-- Chỉ tạo nếu chưa tồn tại (tránh chạy lại script bị lỗi)
+IF NOT EXISTS (SELECT 1 FROM Playlists WHERE PlaylistId = 1)
+BEGIN
+    SET IDENTITY_INSERT Playlists ON;
+    INSERT INTO Playlists (PlaylistId, Name, Description, CreatedAt)
+    VALUES (1, N'Favorites', N'Danh sách bài hát yêu thích', GETDATE());
+    SET IDENTITY_INSERT Playlists OFF;
 END
 GO
