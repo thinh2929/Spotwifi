@@ -69,26 +69,26 @@ namespace Spotwifi
         private void BtnTabInfo_Click(object sender, RoutedEventArgs e)
         {
             PanelSongInfo.Visibility = Visibility.Visible;
-            PanelQueue.Visibility    = Visibility.Collapsed;
+            PanelQueue.Visibility = Visibility.Collapsed;
 
-            BtnTabInfo.Foreground      = Brushes.Black;
+            BtnTabInfo.Foreground = Brushes.Black;
             BtnTabInfo.BorderThickness = new Thickness(0, 0, 0, 2);
-            BtnTabInfo.BorderBrush     = Brushes.Black;
+            BtnTabInfo.BorderBrush = Brushes.Black;
 
-            BtnTabQueue.Foreground      = new SolidColorBrush(Color.FromRgb(0x6C, 0x75, 0x7D));
+            BtnTabQueue.Foreground = new SolidColorBrush(Color.FromRgb(0x6C, 0x75, 0x7D));
             BtnTabQueue.BorderThickness = new Thickness(0);
         }
 
         private void BtnTabQueue_Click(object sender, RoutedEventArgs e)
         {
             PanelSongInfo.Visibility = Visibility.Collapsed;
-            PanelQueue.Visibility    = Visibility.Visible;
+            PanelQueue.Visibility = Visibility.Visible;
 
-            BtnTabQueue.Foreground      = Brushes.Black;
+            BtnTabQueue.Foreground = Brushes.Black;
             BtnTabQueue.BorderThickness = new Thickness(0, 0, 0, 2);
-            BtnTabQueue.BorderBrush     = Brushes.Black;
+            BtnTabQueue.BorderBrush = Brushes.Black;
 
-            BtnTabInfo.Foreground      = new SolidColorBrush(Color.FromRgb(0x6C, 0x75, 0x7D));
+            BtnTabInfo.Foreground = new SolidColorBrush(Color.FromRgb(0x6C, 0x75, 0x7D));
             BtnTabInfo.BorderThickness = new Thickness(0);
         }
 
@@ -100,6 +100,7 @@ namespace Spotwifi
 
         private void UpdateSidebar(Song song)
         {
+            // Cập nhật tab "Đang phát"
             TxtSidebarTitle.Text = song.Title;
             TxtSidebarArtist.Text = song.Artist;
             TxtSidebarAlbum.Text = song.Album;
@@ -107,8 +108,14 @@ namespace Spotwifi
             TxtSidebarDateAdded.Text = song.DateAdded.ToString("dd/MM/yyyy");
             ImgSidebarCover.Source = song.CoverImage;
 
-            // Cập nhật danh sách chờ hiển thị đúng theo chế độ Shuffle
-            CapNhatQueueSidebar(song);
+            // --- THÊM 3 DÒNG NÀY: Cập nhật khối bài đang phát trên đầu của tab Queue ---
+            TxtQueueCurrentTitle.Text = song.Title;
+            TxtQueueCurrentArtist.Text = song.Artist;
+            ImgQueueCurrentCover.Source = song.CoverImage;
+
+            // Cập nhật các bài tiếp theo trong hàng đợi
+            int idx = allSongMaster.IndexOf(song);
+            LbQueue.ItemsSource = allSongMaster.Skip(idx + 1).ToList();
         }
 
         private void CapNhatQueueSidebar(Song song)
@@ -148,12 +155,12 @@ namespace Spotwifi
                         var tagFile = TagLib.File.Create(file);
                         var song = new Song
                         {
-                            Id     = TaoMaBaiHatMoi(),
-                            Title  = !string.IsNullOrWhiteSpace(tagFile.Tag.Title)          ? tagFile.Tag.Title          : Path.GetFileNameWithoutExtension(file),
+                            Id = TaoMaBaiHatMoi(),
+                            Title = !string.IsNullOrWhiteSpace(tagFile.Tag.Title) ? tagFile.Tag.Title : Path.GetFileNameWithoutExtension(file),
                             Artist = !string.IsNullOrWhiteSpace(tagFile.Tag.FirstPerformer) ? tagFile.Tag.FirstPerformer : "Unknown Artist",
-                            Album  = !string.IsNullOrWhiteSpace(tagFile.Tag.Album)          ? tagFile.Tag.Album          : "Unknown Album",
-                            Duration  = tagFile.Properties.Duration,
-                            FilePath  = file
+                            Album = !string.IsNullOrWhiteSpace(tagFile.Tag.Album) ? tagFile.Tag.Album : "Unknown Album",
+                            Duration = tagFile.Properties.Duration,
+                            FilePath = file
                         };
 
                         if (tagFile.Tag.Pictures.Length > 0)
@@ -165,8 +172,8 @@ namespace Spotwifi
                                 mem.Position = 0;
                                 bitmap.BeginInit();
                                 bitmap.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
-                                bitmap.CacheOption   = BitmapCacheOption.OnLoad;
-                                bitmap.StreamSource  = mem;
+                                bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                                bitmap.StreamSource = mem;
                                 bitmap.EndInit();
                             }
                             bitmap.Freeze();
@@ -196,9 +203,9 @@ namespace Spotwifi
             var filtered = string.IsNullOrEmpty(keyword)
                 ? allSongMaster
                 : allSongMaster.Where(s =>
-                    (s.Title  != null && s.Title.ToLower().Contains(keyword))  ||
+                    (s.Title != null && s.Title.ToLower().Contains(keyword)) ||
                     (s.Artist != null && s.Artist.ToLower().Contains(keyword)) ||
-                    (s.Album  != null && s.Album.ToLower().Contains(keyword)));
+                    (s.Album != null && s.Album.ToLower().Contains(keyword)));
 
             foreach (var song in filtered)
                 songsList.Add(song);
@@ -236,7 +243,7 @@ namespace Spotwifi
 
                 SliderProgress.Minimum = 0;
                 SliderProgress.Maximum = song.Duration.TotalSeconds;
-                SliderProgress.Value   = 0;
+                SliderProgress.Value = 0;
 
                 progressTimer.Start();
 
@@ -314,7 +321,7 @@ namespace Spotwifi
             if (!isUserDraggingSlider && mediaPlayer.NaturalDuration.HasTimeSpan)
             {
                 SliderProgress.Value = mediaPlayer.Position.TotalSeconds;
-                TxtCurrentTime.Text  = mediaPlayer.Position.ToString(@"mm\:ss");
+                TxtCurrentTime.Text = mediaPlayer.Position.ToString(@"mm\:ss");
             }
         }
 
@@ -328,7 +335,7 @@ namespace Spotwifi
             if (isUserDraggingSlider)
             {
                 mediaPlayer.Position = TimeSpan.FromSeconds(SliderProgress.Value);
-                TxtCurrentTime.Text  = mediaPlayer.Position.ToString(@"mm\:ss");
+                TxtCurrentTime.Text = mediaPlayer.Position.ToString(@"mm\:ss");
                 isUserDraggingSlider = false;
             }
         }

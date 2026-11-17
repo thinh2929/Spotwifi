@@ -162,18 +162,57 @@
                     <!-- PANEL: DANH SÁCH CHỜ (QUEUE) -->
                     <Grid x:Name="PanelQueue" Grid.Row="1" Visibility="Collapsed">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/> <!-- Khối bài đang phát -->
+                            <RowDefinition Height="Auto"/> <!-- Tiêu đề "Tiếp theo" -->
+                            <RowDefinition Height="*"/>    <!-- Danh sách hàng chờ -->
                         </Grid.RowDefinitions>
 
-                        <TextBlock Grid.Row="0" Text="Tiếp theo"
-                                   Foreground="#6C757D" FontSize="12" FontWeight="SemiBold"
-                                   Margin="12,10,12,4"/>
+                        <!-- 1. KHỐI BÀI ĐANG PHÁT (TRÊN ĐẦU) -->
+                        <StackPanel Grid.Row="0" Margin="12,10,12,6">
+                            <TextBlock Text="Đang phát" Foreground="#6C757D" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                            
+                            <!-- Khung hiển thị bài đang phát -->
+                            <Border Background="#F8F9FA" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="6" Padding="8,6">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="40"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
 
-                        <ListBox x:Name="LbQueue" Grid.Row="1"
-                                 BorderThickness="0"
-                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                 MouseDoubleClick="LbQueue_MouseDoubleClick">
+                                    <!-- Ảnh bìa bài đang phát -->
+                                    <Border CornerRadius="4" ClipToBounds="True" Width="36" Height="36" Background="#E9ECEF">
+                                        <Image x:Name="ImgQueueCurrentCover" Stretch="UniformToFill"/>
+                                    </Border>
+
+                                    <!-- Thông tin bài hát -->
+                                    <StackPanel Grid.Column="1" Margin="8,0,0,0" VerticalAlignment="Center">
+                                        <TextBlock x:Name="TxtQueueCurrentTitle" Text="Chưa chọn bài hát"
+                                                FontSize="12" FontWeight="Bold" Foreground="#1DB954"
+                                                TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock x:Name="TxtQueueCurrentArtist" Text="—"
+                                                Foreground="#6C757D" FontSize="11"
+                                                TextTrimming="CharacterEllipsis"/>
+                                    </StackPanel>
+
+                                    <!-- Icon biểu thị đang phát -->
+                                    <TextBlock Grid.Column="2" Text="🔊" FontSize="12" VerticalAlignment="Center" Margin="4,0"/>
+                                </Grid>
+                            </Border>
+
+                            <Separator Margin="0,10,0,2"/>
+                        </StackPanel>
+
+                        <!-- 2. TIÊU ĐỀ HÀNG ĐỢI -->
+                        <TextBlock Grid.Row="1" Text="Tiếp theo"
+                                Foreground="#6C757D" FontSize="12" FontWeight="SemiBold"
+                                Margin="12,4,12,4"/>
+
+                        <!-- 3. DANH SÁCH BÀI TIẾP THEO -->
+                        <ListBox x:Name="LbQueue" Grid.Row="2"
+                                BorderThickness="0"
+                                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                MouseDoubleClick="LbQueue_MouseDoubleClick">
 
                             <ListBox.ItemContainerStyle>
                                 <Style TargetType="ListBoxItem">
@@ -197,11 +236,11 @@
 
                                         <StackPanel Grid.Column="1" Margin="8,0,0,0" VerticalAlignment="Center">
                                             <TextBlock Text="{Binding Title}"
-                                                       FontSize="12" FontWeight="SemiBold"
-                                                       TextTrimming="CharacterEllipsis"/>
+                                                    FontSize="12" FontWeight="SemiBold"
+                                                    TextTrimming="CharacterEllipsis"/>
                                             <TextBlock Text="{Binding Artist}"
-                                                       Foreground="#6C757D" FontSize="11"
-                                                       TextTrimming="CharacterEllipsis"/>
+                                                    Foreground="#6C757D" FontSize="11"
+                                                    TextTrimming="CharacterEllipsis"/>
                                         </StackPanel>
                                     </Grid>
                                 </DataTemplate>
