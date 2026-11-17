@@ -1,6 +1,429 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <!-- Styles sẽ được thêm vào đây (Task 2.1) -->
+	<!-- Styles sẽ được thêm vào đây (Task 2.1) -->
 
-</ResourceDictionary>
+
+
+	<!-- ================================
+	               SCROLLVIEWER 
+	     ================================-->
+
+
+	<!-- Vùng click của thanh cuộn: trong suốt -->
+	<Style x:Key="ScrollTrackButtonStyle" TargetType="RepeatButton">
+		<Setter Property="Focusable" Value="False"/>
+		<Setter Property="Template">
+			<Setter.Value>
+                <ControlTemplate TargetType="RepeatButton">
+
+                    <Border Background="Transparent"/>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<!-- Cục kéo (Thumb) -->
+	<Style x:Key="ScrollThumbStyle" TargetType="Thumb">
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="Thumb">
+					<Border x:Name="ThumbBd" Margin="2" CornerRadius="4"
+							Background="{DynamicResource BrushScrollThumb}"/>
+					<ControlTemplate.Triggers>
+						<Trigger Property="IsMouseOver" Value="True">
+							<Setter TargetName="ThumbBd" Property="Background" Value="{DynamicResource BrushScrollThumbHover}"/>
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+
+    <!-- Scrollbar ngang -->
+	<ControlTemplate x:Key="HorizontalScrollBarTemplate" TargetType="ScrollBar">
+		<Grid Background="Transparent">
+			<Track x:Name="PART_Track"
+				   IsDirectionReversed="False">
+				<Track.DecreaseRepeatButton>
+					<RepeatButton Command="ScrollBar.PageLeftCommand"
+								  Style="{StaticResource ScrollTrackButtonStyle}"/>
+				</Track.DecreaseRepeatButton>
+				<Track.Thumb>
+					<Thumb Style="{StaticResource ScrollThumbStyle}"/>
+				</Track.Thumb>
+				<Track.IncreaseRepeatButton>
+					<RepeatButton Command="ScrollBar.PageRightCommand"
+								  Style="{StaticResource ScrollTrackButtonStyle}"/>
+				</Track.IncreaseRepeatButton>
+			</Track>
+		</Grid>
+	</ControlTemplate>
+
+	<!-- ScrollBar dọc (không đặt x:Key => áp dụng cho mọi ScrollBar) -->
+	<Style TargetType="ScrollBar">
+		<Setter Property="Width" Value="10"/>
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="ScrollBar">
+					<Grid Background="Transparent">
+						<Track x:Name="PART_Track"
+                               IsDirectionReversed="True">
+							<Track.DecreaseRepeatButton>
+								<RepeatButton Command="ScrollBar.PageUpCommand"
+											  Style="{StaticResource ScrollTrackButtonStyle}"/>
+							</Track.DecreaseRepeatButton>
+							<Track.Thumb>
+								<Thumb Style="{StaticResource ScrollThumbStyle}"/>
+							</Track.Thumb>
+							<Track.IncreaseRepeatButton>
+								<RepeatButton Command="ScrollBar.PageDownCommand"
+											  Style="{StaticResource ScrollTrackButtonStyle}"/>
+							</Track.IncreaseRepeatButton>
+						</Track>
+					</Grid>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+		<Style.Triggers>
+			<Trigger Property="Orientation" Value="Horizontal">
+				<Setter Property="Width" Value="Auto"/>
+				<Setter Property="Height" Value="10"/>
+				<Setter Property="Template" Value="{StaticResource HorizontalScrollBarTemplate}"/>
+			</Trigger>
+		</Style.Triggers>
+	</Style>
+
+
+
+
+
+
+
+
+
+
+
+	<!-- ================================
+	               SLIDER 
+	     ================================-->
+	
+	<!-- Phần đã chạy (trắng, hover thì xanh) -->
+	<Style x:Key="SliderFillButtonStyle" TargetType="RepeatButton">
+		<Setter Property="Focusable" Value="False"/>
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="RepeatButton">
+					<Grid Background="Transparent">
+						<Border Height="4" CornerRadius="2" VerticalAlignment="Center"
+								Background="{TemplateBinding Background}"/>
+					</Grid>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<!-- Phần chưa chạy: trong suốt, chỉ để nhận click -->
+	<Style x:Key="SliderEmptyButtonStyle" TargetType="RepeatButton">
+		<Setter Property="Focusable" Value="False"/>
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="RepeatButton">
+					<Border Background="Transparent"/>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<!-- Chấm tròn -->
+	<Style x:Key="SliderThumbStyle" TargetType="Thumb">
+		<Setter Property="Width" Value="12"/>
+		<Setter Property="Height" Value="12"/>
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="Thumb">
+					<Grid Background="Transparent">
+						<Ellipse Width="12" Height="12" Fill="{DynamicResource BrushTextPrimary}"/>
+					</Grid>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<!-- Template cho Slider -->
+	<ControlTemplate x:Key="SpotifySliderTemplate" TargetType="Slider">
+		<Grid Background="Transparent" Height="16">
+			<Border Height="4" CornerRadius="2" VerticalAlignment="Center"
+					Background="{DynamicResource BrushSliderTrack}"/>
+			<Track x:Name="PART_Track"
+				   Minimum="{TemplateBinding Minimum}"
+                   Maximum="{TemplateBinding Maximum}"
+                   Value="{TemplateBinding Value}"
+                   Orientation="{TemplateBinding Orientation}"
+                   IsDirectionReversed="{TemplateBinding IsDirectionReversed}">
+				<Track.DecreaseRepeatButton>
+					<RepeatButton x:Name="FillButton" Command="Slider.DecreaseLarge"
+								  Background="{DynamicResource BrushTextPrimary}"
+								  Style="{StaticResource SliderFillButtonStyle}"/>
+				</Track.DecreaseRepeatButton>
+				<Track.Thumb>
+					<Thumb x:Name="SliderThumb" Opacity="0"
+						   Style="{StaticResource SliderThumbStyle}"/>
+				</Track.Thumb>
+				<Track.IncreaseRepeatButton>
+					<RepeatButton Command="Slider.IncreaseLarge"
+								  Style="{StaticResource SliderEmptyButtonStyle}"/>
+				</Track.IncreaseRepeatButton>
+			</Track>
+		</Grid>
+		<ControlTemplate.Triggers>
+			<Trigger Property="IsMouseOver" Value="True">
+				<Setter TargetName="FillButton" Property="Background" Value="{DynamicResource BrushPrimary}"/>
+				<Setter TargetName="SliderThumb" Property="Opacity" Value="1"/>
+			</Trigger>
+			<Trigger Property="IsMouseCaptureWithin" Value="True">
+				<Setter TargetName="FillButton" Property="Background" Value="{DynamicResource BrushPrimary}"/>
+				<Setter TargetName="SliderThumb" Property="Opacity" Value="1"/>
+			</Trigger>
+		</ControlTemplate.Triggers>
+	</ControlTemplate>
+
+
+	<!-- Slider cho Seekbar -->
+	<Style x:Key="SeekSliderStyle" TargetType="Slider">
+		<Setter Property="Minimum" Value="0"/>
+		<Setter Property="Focusable" Value="False"/>
+		<Setter Property="IsMoveToPointEnabled" Value="True"/>
+		<Setter Property="Template" Value="{StaticResource SpotifySliderTemplate}"/>
+	</Style>
+	
+	
+    <!-- Slider cho Volume -->
+	<Style x:Key="VolumeSliderStyle" TargetType="Slider">
+		<Setter Property="Minimum" Value="0"/>
+		<Setter Property="Maximum" Value="1"/>
+		<Setter Property="Width" Value="100"/>
+		<Setter Property="Focusable" Value="False"/>
+		<Setter Property="IsMoveToPointEnabled" Value="True"/>
+		<Setter Property="Template" Value="{StaticResource SpotifySliderTemplate}"/>
+	</Style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+	<!-- ================================
+	               BUTTON 
+	     ================================-->
+	
+	<!--Style co ban cho button-->
+	<Style x:Key="SpotifyButton" TargetType="Button">
+		<Setter Property="Foreground" Value="{DynamicResource BrushTextPrimary}"/>
+		<Setter Property="Background" Value="Transparent"/>
+		<Setter Property="BorderBrush" Value="{DynamicResource BrushBorder}"/>
+		<Setter Property="BorderThickness" Value="1"/>
+		<Setter Property="Padding" Value="16,8"/>
+		<Setter Property="FontWeight" Value="Bold"/>
+		<Setter Property="Cursor" Value="Hand"/>
+		<Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+		
+		<!--Bo goc tron-->
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="Button">
+					<Border x:Name="ButtonBorder"
+							CornerRadius="20"
+							Background="{TemplateBinding Background}"
+							BorderBrush="{TemplateBinding BorderBrush}"
+							BorderThickness="{TemplateBinding BorderThickness}"
+							Padding="{TemplateBinding Padding}">
+						
+						<ContentPresenter HorizontalAlignment="Center"
+										  VerticalAlignment="Center"/>
+					</Border>
+					
+					
+                    <!--Hieu ung Hover-->   
+					<ControlTemplate.Triggers>
+						<Trigger Property="IsMouseOver" Value="True">
+							<Setter TargetName="ButtonBorder"
+									Property="Background"
+									Value="{DynamicResource BrushSurfaceHover}"/>
+						</Trigger>
+
+						<Trigger Property="IsPressed" Value="True">
+							<Setter TargetName="ButtonBorder"
+									Property="Opacity"
+									Value="0.7"/>
+						</Trigger>
+						<Trigger Property="IsEnabled" Value="False">
+							<Setter TargetName="ButtonBorder" Property="Opacity" Value="0.4"/>
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+	
+	
+	<!-- Button mau xanh -->
+	<Style x:Key="AccentButton" TargetType="Button" BasedOn="{StaticResource SpotifyButton}">
+		<Setter Property="Background" Value="{DynamicResource BrushPrimary}"/>
+		<Setter Property="Foreground" Value="Black"/>
+		<Setter Property="BorderThickness" Value="0"/>
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="Button">
+					<Border x:Name="Bd" CornerRadius="20"
+							Background="{TemplateBinding Background}"
+							Padding="{TemplateBinding Padding}">
+						<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+					</Border>
+					<ControlTemplate.Triggers>
+						<Trigger Property="IsMouseOver" Value="True">
+							<Setter TargetName="Bd" Property="Background" Value="{DynamicResource BrushPrimaryHover}"/>
+						</Trigger>
+						<Trigger Property="IsPressed" Value="True">
+							<Setter TargetName="Bd" Property="Opacity" Value="0.8"/>
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+	
+	
+	 
+	
+
+	<!-- IconButton (Prev, Next, Mute...) -->
+	<Style x:Key="IconButton" TargetType="Button">
+		<Setter Property="Foreground"
+				Value="{DynamicResource BrushTextSecondary}"/>
+
+		<Setter Property="Width" Value="32"/>
+		<Setter Property="Height" Value="32"/>
+		<Setter Property="Cursor" Value="Hand"/>
+		<Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="Button">
+					<Grid Background="Transparent">
+						<ContentPresenter
+							HorizontalAlignment="Center"
+							VerticalAlignment="Center"/>
+					</Grid>
+
+					<ControlTemplate.Triggers>
+						<Trigger Property="IsMouseOver" Value="True">
+							<Setter Property="Foreground"
+									Value="{DynamicResource BrushTextPrimary}"/>
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+	
+	
+	<!-- Play/Pause Button -->
+	<Style x:Key="PlayButton" TargetType="Button">
+		<Setter Property="Width" Value="40"/>
+		<Setter Property="Height" Value="40"/>
+		<Setter Property="Foreground" Value="{DynamicResource BrushBackground}"/>
+		<Setter Property="Cursor" Value="Hand"/>
+		<Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="Button">
+					<Border x:Name="Bd" CornerRadius="20" Background="{DynamicResource BrushPrimary}">
+						<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+					</Border>
+					<ControlTemplate.Triggers>
+						<Trigger Property="IsMouseOver" Value="True">
+							<Setter TargetName="Bd" Property="Opacity" Value="0.9"/>
+						</Trigger>
+						<Trigger Property="IsPressed" Value="True">
+							<Setter TargetName="Bd" Property="Opacity" Value="0.7"/>
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+
+
+
+
+
+
+
+
+
+	<!-- ================================
+	               TEXTBOX 
+	     ================================-->
+	<Style x:Key="SpotifyTextBox" TargetType="TextBox">
+		<Setter Property="Background" Value="{DynamicResource BrushInput}"/>
+		<Setter Property="Foreground" Value="{DynamicResource BrushTextPrimary}"/>
+		<Setter Property="CaretBrush" Value="{DynamicResource BrushTextPrimary}"/>
+		<Setter Property="Padding" Value="14,8"/>
+		<Setter Property="FontSize" Value="14"/>
+		<Setter Property="BorderThickness" Value="1"/>
+		<Setter Property="BorderBrush" Value="Transparent"/>
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="TextBox">
+					<Border x:Name="Bd" CornerRadius="20"
+							Background="{TemplateBinding Background}"
+							BorderBrush="{TemplateBinding BorderBrush}"
+							BorderThickness="{TemplateBinding BorderThickness}"
+							Padding="{TemplateBinding Padding}">
+						<Grid>
+							<ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="Center"/>
+							<TextBlock x:Name="Placeholder" Text="{TemplateBinding Tag}"
+									   Foreground="{DynamicResource BrushTextSecondary}"
+									   VerticalAlignment="Center" IsHitTestVisible="False"
+									   Visibility="Collapsed"/>
+						</Grid>
+					</Border>
+					<ControlTemplate.Triggers>
+						<Trigger Property="Text" Value="">
+							<Setter TargetName="Placeholder" Property="Visibility" Value="Visible"/>
+						</Trigger>
+						<Trigger Property="IsKeyboardFocusWithin" Value="True">
+							<Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource BrushTextPrimary}"/>
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+	
+
+	
+	<!--TEXTBLOCK-->
+
+	<Style x:Key="TextPrimary" TargetType="TextBlock">
+		<Setter Property="Foreground" Value="{DynamicResource BrushTextPrimary}"/>
+	</Style>
+	
+	<Style x:Key="TextSecondary" TargetType="TextBlock">
+		<Setter Property="Foreground" Value="{DynamicResource BrushTextSecondary}"/>
+		<Setter Property="FontSize" Value="12"/>
+	</Style>
+	
+	
+
+	</ResourceDictionary>
