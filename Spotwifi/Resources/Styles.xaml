@@ -5,12 +5,11 @@
 
 
 
-
-
 	<!-- ================================
 	               SCROLLVIEWER 
 	     ================================-->
-	
+
+
 	<!-- Vùng click của thanh cuộn: trong suốt -->
 	<Style x:Key="ScrollTrackButtonStyle" TargetType="RepeatButton">
 		<Setter Property="Focusable" Value="False"/>
