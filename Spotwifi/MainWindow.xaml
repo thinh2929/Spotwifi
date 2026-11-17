@@ -263,6 +263,10 @@
                     <!-- Nút Play / Pause / Chuyển bài -->
                     <StackPanel Grid.Column="1" Orientation="Horizontal"
                                 HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Button x:Name="BtnShuffle" Content="🔀" Width="36" Height="32" Margin="3" 
+                            FontSize="13" Cursor="Hand" Background="Transparent" BorderThickness="0"
+                            Foreground="#6C757D" ToolTip="Bật/Tắt phát ngẫu nhiên"
+                            Click="BtnShuffle_Click"/>
                         <Button Content="⏮" Width="36" Height="32" Margin="3" FontSize="14" Click="BtnPrev_Click"/>
                         <Button x:Name="BtnPlayPause" Content="▶" Width="48" Height="36"
                                 Margin="6,0" FontSize="16" FontWeight="Bold" Click="BtnPlayPause_Click"/>
