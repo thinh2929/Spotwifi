@@ -105,12 +105,12 @@ Spotwifi/
 > **Trọng tâm:** XAML, WPF Styles, Spotify Dark Theme, Custom Controls.
 
 #### Task 2.1: Xây dựng hệ thống Spotify Theme Resource
-- [ ] Tạo file `Resources/Colors.xaml` định nghĩa bảng màu chuẩn Spotify:
+- [x] Tạo file `Resources/Colors.xaml` định nghĩa bảng màu chuẩn Spotify:
   - Nền chính: `#121212`
   - Nền thẻ (Card) / Sidebar: `#181818`, Hover: `#282828`
   - Điểm nhấn xanh Spotify: `#1DB954`, Hover: `#1ED760`
   - Màu chữ chính: `#FFFFFF`, Màu chữ phụ: `#B3B3B3`
-- [ ] Tạo file `Resources/Styles.xaml`:
+- [x] Tạo file `Resources/Styles.xaml`:
   - [ ] Custom `ScrollViewer`: Thanh cuộn mỏng, màu tối hiện đại, ẩn mũi tên.
   - [ ] Custom `Slider` cho Seek Bar (thanh tiến trình nhạc): Đường line mỏng, chấm tròn thumb đổi màu khi rê chuột.
   - [ ] Custom `Slider` cho Volume: Thanh trượt nhỏ gọn, màu xanh lá khi kéo.
@@ -165,9 +165,8 @@ Spotwifi/
 - [x] Viết hàm `Next()`: Chuyển sang bài tiếp theo trong hàng đợi (Queue).
 - [x] Viết hàm `Previous()`: Quay lại bài hát trước đó.
 - [x] Xử lý sự kiện `MediaEnded`: Tự động chuyển phát bài kế tiếp khi bài hiện tại chạy hết.
-- [ ] Viết thuật toán phát ngẫu nhiên (`Shuffle`): Trộn danh sách bài hát không trùng lặp.
+- [x] Viết thuật toán phát ngẫu nhiên (`Shuffle`): Trộn danh sách bài hát không trùng lặp.
 - [ ] Viết chế độ lặp lại (`Repeat`):
-  - [ ] Lặp lại toàn bộ danh sách (Repeat All).
   - [ ] Lặp lại 1 bài duy nhất (Repeat One).
   - [ ] Tắt lặp lại (No Repeat).
 

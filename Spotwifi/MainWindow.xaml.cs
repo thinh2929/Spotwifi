@@ -27,6 +27,9 @@ namespace Spotwifi
         private bool isUserDraggingSlider = false;
         private bool isSidebarOpen = true;
 
+        private bool isShuffle = false;
+        private List<Song> shuffledSongs = new List<Song>();
+        private Random rng = new Random();
         public MainWindow()
         {
             InitializeComponent();
@@ -97,16 +100,25 @@ namespace Spotwifi
 
         private void UpdateSidebar(Song song)
         {
-            TxtSidebarTitle.Text    = song.Title;
-            TxtSidebarArtist.Text   = song.Artist;
-            TxtSidebarAlbum.Text    = song.Album;
+            TxtSidebarTitle.Text = song.Title;
+            TxtSidebarArtist.Text = song.Artist;
+            TxtSidebarAlbum.Text = song.Album;
             TxtSidebarDuration.Text = song.DurationDisplay;
             TxtSidebarDateAdded.Text = song.DateAdded.ToString("dd/MM/yyyy");
-            ImgSidebarCover.Source  = song.CoverImage;
+            ImgSidebarCover.Source = song.CoverImage;
 
-            // Cập nhật queue: các bài sau bài đang phát
-            int idx = allSongMaster.IndexOf(song);
-            LbQueue.ItemsSource = allSongMaster.Skip(idx + 1).ToList();
+            // Cập nhật danh sách chờ hiển thị đúng theo chế độ Shuffle
+            CapNhatQueueSidebar(song);
+        }
+
+        private void CapNhatQueueSidebar(Song song)
+        {
+            var targetList = isShuffle && shuffledSongs.Count > 0 ? shuffledSongs : allSongMaster;
+            int idx = targetList.IndexOf(song);
+            if (idx != -1)
+            {
+                LbQueue.ItemsSource = targetList.Skip(idx + 1).ToList();
+            }
         }
 
         #endregion
@@ -266,18 +278,27 @@ namespace Spotwifi
         {
             if (allSongMaster.Count == 0 || currentSong == null) return;
 
-            int currentIndex = allSongMaster.IndexOf(currentSong);
-            int nextIndex    = (currentIndex + 1) % allSongMaster.Count;
-            PlaySong(allSongMaster[nextIndex]);
+            // Chọn danh sách đang áp dụng: ngẫu nhiên hay danh sách gốc
+            var targetList = isShuffle && shuffledSongs.Count > 0 ? shuffledSongs : allSongMaster;
+
+            int currentIndex = targetList.IndexOf(currentSong);
+            if (currentIndex == -1) currentIndex = 0;
+
+            int nextIndex = (currentIndex + 1) % targetList.Count;
+            PlaySong(targetList[nextIndex]);
         }
 
         private void BtnPrev_Click(object sender, RoutedEventArgs e)
         {
             if (allSongMaster.Count == 0 || currentSong == null) return;
 
-            int currentIndex = allSongMaster.IndexOf(currentSong);
-            int prevIndex    = (currentIndex - 1 + allSongMaster.Count) % allSongMaster.Count;
-            PlaySong(allSongMaster[prevIndex]);
+            var targetList = isShuffle && shuffledSongs.Count > 0 ? shuffledSongs : allSongMaster;
+
+            int currentIndex = targetList.IndexOf(currentSong);
+            if (currentIndex == -1) currentIndex = 0;
+
+            int prevIndex = (currentIndex - 1 + targetList.Count) % targetList.Count;
+            PlaySong(targetList[prevIndex]);
         }
 
         private void MediaPlayer_MediaEnded(object? sender, EventArgs e)
@@ -316,6 +337,70 @@ namespace Spotwifi
         {
             if (mediaPlayer != null)
                 mediaPlayer.Volume = SliderVolume.Value;
+        }
+
+        #endregion
+
+        #region Shuffle Logic
+
+        /// <summary>
+        /// Trộn danh sách bài hát theo thuật toán Fisher-Yates (không trùng lặp)
+        /// </summary>
+        private void TaoDanhSachShuffle()
+        {
+            if (allSongMaster.Count == 0) return;
+
+            shuffledSongs = new List<Song>(allSongMaster);
+
+            // Nếu đang có bài hát phát, tách riêng bài đó ra đưa lên đầu danh sách
+            if (currentSong != null)
+            {
+                shuffledSongs.Remove(currentSong);
+            }
+
+            // Thuật toán Fisher-Yates trộn từ cuối lên đầu
+            int n = shuffledSongs.Count;
+            while (n > 1)
+            {
+                n--;
+                int k = rng.Next(n + 1);
+                // Hoán vị 2 phần tử
+                Song temp = shuffledSongs[k];
+                shuffledSongs[k] = shuffledSongs[n];
+                shuffledSongs[n] = temp;
+            }
+
+            // Đưa bài đang phát vào lại vị trí đầu tiên
+            if (currentSong != null)
+            {
+                shuffledSongs.Insert(0, currentSong);
+            }
+        }
+
+        private void BtnShuffle_Click(object sender, RoutedEventArgs e)
+        {
+            isShuffle = !isShuffle;
+
+            if (isShuffle)
+            {
+                TaoDanhSachShuffle();
+                // Đổi màu nút để báo hiệu đang BẬT (màu đen hoặc xanh)
+                BtnShuffle.Foreground = Brushes.Black;
+                BtnShuffle.FontWeight = FontWeights.Bold;
+            }
+            else
+            {
+                shuffledSongs.Clear();
+                // Trả màu nút về mặc định (xám)
+                BtnShuffle.Foreground = new SolidColorBrush(Color.FromRgb(0x6C, 0x75, 0x7D));
+                BtnShuffle.FontWeight = FontWeights.Normal;
+            }
+
+            // Cập nhật lại tab Danh sách chờ (Queue) ở Sidebar phải
+            if (currentSong != null)
+            {
+                CapNhatQueueSidebar(currentSong);
+            }
         }
 
         #endregion
