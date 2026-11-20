@@ -73,9 +73,9 @@ Spotwifi/
 - [x] Tạo bảng `Songs` (`Id`, `Title`, `Artist`, `Album`, `DurationSeconds`, `FilePath`, `CoverImagePath`, `IsFavorite`, `DateAdded`). // DateAdded: Ngày thêm nhạc vào database
 - [x] Tạo bảng `Playlists` (`PlaylistId`, `Name`, `Description`, `CreatedAt`).
 - [x] Tạo bảng `Playlist_Songs` (`PlaylistId`, `SongId`, `AddedAt`, PK composite). // AddedAt: Ngày thêm nhạc vào Playlist
-- [ ] Viết lớp `Database/DatabaseHelper.cs` quản lý kết nối, mở/đóng kết nối an toàn.
-- [ ] Viết các hàm tiện ích: `ExecuteQuery(sql, parameters)`, `ExecuteNonQuery(sql, parameters)`, `ExecuteScalar(sql, parameters)`.
-- [ ] Thêm chuỗi kết nối `ConnectionString` vào cấu hình ứng dụng (`App.config` hoặc cấu hình tập trung).
+- [x] Viết lớp `Database/DatabaseHelper.cs` quản lý kết nối, mở/đóng kết nối an toàn.
+- [x] Viết các hàm tiện ích: `ExecuteQuery(sql, parameters)`, `ExecuteNonQuery(sql, parameters)`, `ExecuteScalar(sql, parameters)`.
+- [x] Thêm chuỗi kết nối `ConnectionString` vào cấu hình ứng dụng (`App.config` hoặc cấu hình tập trung).
 
 #### Task 1.2: Module Import & Đọc Metadata MP3 (`TagLibService.cs`)
 - [ ] Viết hàm mở hộp thoại chọn 1 hoặc nhiều file MP3 (`OpenFileDialog`).
