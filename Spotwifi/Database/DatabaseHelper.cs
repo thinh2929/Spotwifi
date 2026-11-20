@@ -1,6 +1,7 @@
 using System;
 using System.Data;
 using Microsoft.Data.SqlClient;
+using System.Configuration;
 
 namespace Spotwifi.Database
 {
@@ -8,8 +9,11 @@ namespace Spotwifi.Database
     {
         // Chuỗi kết nối Windows Authentication (localhost)
         // Chỉnh sửa tên server nếu máy bạn dùng instance riêng như .\SQLEXPRESS
-        private static readonly string ConnectionString = 
-            @"Server=localhost;Database=SpotwifiDB;Trusted_Connection=True;TrustServerCertificate=True;";
+        private static readonly string ConnectionString =
+            ConfigurationManager.ConnectionStrings["SpotwifiDB"]?.ConnectionString
+            ?? throw new InvalidOperationException(
+                "Chua cau hinh ConnectionString SpotwifiDB trong App.config!"
+            );
 
         public static SqlConnection GetConnection()
         {
@@ -55,6 +59,32 @@ namespace Spotwifi.Database
             }
             conn.Open();
             return cmd.ExecuteScalar();
+        }
+
+        public static bool TestConnection(out string message)
+        {
+            try
+            {
+                using var conn = GetConnection();
+
+                conn.Open();
+
+                using var cmd = new SqlCommand(
+                    "SELECT DB_NAME()", conn);
+
+                string databaseName =
+                    Convert.ToString(cmd.ExecuteScalar()) ?? "";
+
+                message = $"Kết nối thành công! Database: {databaseName}";
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                message = "Kết nối thất bại: " + ex.Message;
+
+                return false;
+            }
         }
     }
 }
